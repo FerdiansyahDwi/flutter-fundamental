@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pml/basic_widgets/text_input.dart';
 import 'package:pml/basic_widgets/text_widget.dart';
 import 'package:pml/basic_widgets/image_widget.dart';
+import 'package:pml/pages/google_map_review.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const GoogleMapReviewScreen(),
     );
   }
 }
