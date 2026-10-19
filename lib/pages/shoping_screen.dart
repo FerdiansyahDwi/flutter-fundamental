@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pml/data/barang.dart';
 
 class ShopingScreen extends StatelessWidget {
@@ -19,7 +20,7 @@ class ShopingScreen extends StatelessWidget {
             final barang = list_barang[index];
             return GestureDetector(
               onTap: () {
-                Navigator.pushNamed(context, '/detail', arguments: barang);
+                context.go('/detail/${barang.id}');
               },
               child: Container(
                 color: const Color.fromARGB(255, 165, 228, 238),
