@@ -1,24 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:pml/model/plan.dart';
-import 'package:pml/provider/plan_provider.dart';
-import 'package:pml/views/plan_creator_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-void main() => runApp(MasterPlanApp());
+import 'pages/todo_page.dart';
 
-class MasterPlanApp extends StatelessWidget {
-  const MasterPlanApp({super.key});
+void main() => runApp(const ProviderScope(child: MyApp()));
 
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
   @override
-  Widget build(BuildContext context) {
-    return PlanProvider(
-      notifier: ValueNotifier<List<Plan>>(
-        const [],
-      ), // Sekarang berisikan List kosong
-      child: MaterialApp(
-        title: 'State management app',
-        theme: ThemeData(primarySwatch: Colors.purple),
-        home: const PlanCreatorScreen(), // Mengarah ke layar yang baru dibuat
-      ),
-    );
-  }
+  Widget build(BuildContext context) => MaterialApp(
+    title: 'Week 3 - ToDo',
+    theme: ThemeData(colorSchemeSeed: Colors.teal, useMaterial3: true),
+    home: const TodoPage(),
+  );
 }
