@@ -4,15 +4,17 @@ class ProductsNotifier extends AsyncNotifier<List<String>> {
   @override
   Future<List<String>> build() async {
     await Future.delayed(const Duration(seconds: 2));
+    // throw Exception('Gagal terhubung ke server');
     return ['Keyboard', 'Mouse', 'Monitor'];
   }
 
   Future<void> refresh() async {
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() => _fetch());
+    state = await AsyncValue.guard(() => fetch());
   }
 
-  Future<List<String>> _fetch() async {
+  Future<List<String>> fetch() async {
+    // Simulasi refresh memakan waktu 1 detik
     await Future.delayed(const Duration(seconds: 1));
     return ['Keyboard', 'Mouse', 'Monitor', 'Headset'];
   }

@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pml/providers/product_provider.dart';
+
+import '../providers/product_provider.dart';
 
 class ProductPage extends ConsumerWidget {
   const ProductPage({super.key});
-  
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final productsAsync = ref.watch(productsProvider);
+
     return Scaffold(
       appBar: AppBar(title: const Text('Produk')),
       body: productsAsync.when(
