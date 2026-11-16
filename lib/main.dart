@@ -33,7 +33,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String dataPizza = '';
+  List<Pizza> dataPizza = [];
 
   Future readJsonFile() async {
     String jsonString = await DefaultAssetBundle.of(context)
@@ -45,7 +45,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
       print("nama : ${listPizza[0]?.pizzaName}");
       setState(() {
-        dataPizza = jsonString;
+        dataPizza = listPizza;
       });
     } on Exception catch (e) {
       print(e.toString());
@@ -70,8 +70,9 @@ class _MyHomePageState extends State<MyHomePage> {
               title: Text(dataPizza[index].pizzaName),
               subtitle: Text(dataPizza[index].description),
             );
-        },
-      ),
-    ),
-  };
+          },
+        ),
+      )
+    );
+  }
 }
