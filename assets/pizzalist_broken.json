@@ -1,0 +1,37 @@
+[
+  {
+    "id": "bukan_angka_1",
+    "pizzaName": null,
+    "description": null,
+    "price": "harga_rusak",
+    "imageUrl": null
+  },
+  {
+    "id": null,
+    "pizzaName": "Pizza Misterius (ID & Harga Hilang)",
+    "description": "Pizza ini tidak memiliki ID valid dan harga bertipe string acak.",
+    "price": "sembilan_ribu_rupiah",
+    "imageUrl": ""
+  },
+  {
+    "id": "101",
+    "pizzaName": "Pizza Parsed String",
+    "description": "ID dan Price berupa angka dalam string, harus aman di-tryParse.",
+    "price": "14.99",
+    "imageUrl": "assets/pizza.jpg"
+  },
+  {
+    "id": 202,
+    "pizzaName": "",
+    "description": "Nama kosong, harus diganti dengan nilai fallback yang ramah.",
+    "price": -5.0,
+    "imageUrl": "assets/pizza.jpg"
+  },
+  {
+    "id": 303,
+    "pizzaName": "Pizza Tanpa Deskripsi",
+    "description": null,
+    "price": 12.50,
+    "imageUrl": null
+  }
+]
