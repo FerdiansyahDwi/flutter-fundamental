@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "pizzaName": "Margherita",
+    "description": "Pizza with tomato...",
+    "price": 8.75,
+    "imageUrl": "assets/pizza.jpg"
+  },
+  {
+    "id": 2,
+    "pizzaName": "Pepperoni",
+    "description": "Pizza with pepperoni...",
+    "price": 10.25,
+    "imageUrl": "assets/pizza.jpg"
+  },
+  {
+    "id": 3,
+    "pizzaName": "Vegetarian",
+    "description": "Pizza with vegetables...",
+    "price": 9.50,
+    "imageUrl": "assets/pizza.jpg"
+  },
+  {
+    "id": 4,
+    "pizzaName": "BBQ Chicken",
+    "description": "Pizza with BBQ chicken...",
+    "price": 11.00,
+    "imageUrl": "assets/pizza.jpg"
+  },
+  {
+    "id": 5,
+    "pizzaName": "Buffalo Chicken",
+    "description": "Pizza with Buffalo chicken...",
+    "price": 11.00,
+    "imageUrl": "assets/pizza.jpg"
+  },
+  {
+    "id": 6,
+    "pizzaName": "Italian Sausage",
+    "description": "Pizza with Italian sausage...",
+    "price": 10.00,
+    "imageUrl": "assets/pizza.jpg"
+  },
+  {
+    "id": 7,
+    "pizzaName": "Supreme",
+    "description": "Pizza with various toppings...",
+    "price": 12.00,
+    "imageUrl": "assets/pizza.jpg"
+  },
+  {
+    "id": 8,
+    "pizzaName": "Mexican",
+    "description": "Pizza with Mexican toppings...",
+    "price": 10.75,
+    "imageUrl": "assets/pizza.jpg"
+  },
+  {
+    "id": 9,
+    "pizzaName": "White Pizza",
+    "description": "Pizza with white sauce and vegetables...",
+    "price": 9.50,
+    "imageUrl": "assets/pizza.jpg"
+  },
+  {
+    "id": 10,
+    "pizzaName": "Sauce Pizza",
+    "description": "Pizza with special sauce...",
+    "price": 8.75,
+    "imageUrl": "assets/pizza.jpg"
+  }
+]

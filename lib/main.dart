@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:pml/basic_widgets/text_input.dart';
 import 'package:pml/basic_widgets/text_widget.dart';
 import 'package:pml/basic_widgets/image_widget.dart';
+import 'package:pml/model/pizza.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,9 +18,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
-      ),
+      theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple)),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
@@ -32,89 +33,45 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-  DateTime? _dateTime = DateTime.now();
+  String dataPizza = '';
 
-  // void _incrementCounter() {
-  //   setState(() {
-  //     _counter++;
-  //   });
-  // }
+  Future readJsonFile() async {
+    String jsonString = await DefaultAssetBundle.of(context)
+        .loadString('assets/pizzalist.json');
 
-  void tampilkanDialog(BuildContext context) {
-    Widget okButton =  TextButton(
-      child: Text("OK"),
-      onPressed: () => Navigator.pop(context),
-    );
+    try {
+      var data = jsonDecode(jsonString) as List<dynamic>;
+      var listPizza = data.map((e) => Pizza.fromJson(e)).toList();
 
-    AlertDialog dialog = AlertDialog(
-      title: Text("Judul Dialog"),
-      content: Text("ini isi dialog Ferdi"),
-      actions: [
-        okButton,
-      ],
-    );
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return dialog;
-      },
-    );
+      print("nama : ${listPizza[0]?.pizzaName}");
+      setState(() {
+        dataPizza = jsonString;
+      });
+    } on Exception catch (e) {
+      print(e.toString());
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    readJsonFile();
+
     return Scaffold(
       appBar: AppBar(
-        
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        
+
         title: Text(widget.title),
       ),
-      body: Center(
-        
-        child: Column(
-          
-          mainAxisAlignment: .center,
-          children: [
-            Text(_dateTime?.toIso8601String() ?? "Test"),
-
-            MyImageWidget(),
-            const MyTextWidget(),
-
-            inputTextWidget(),
-
-            ElevatedButton(
-              child: Text("Ubah tanggal"),
-              onPressed: () async {
-                final DateTime? tanggal = await showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime(2015, 8),
-                  lastDate: DateTime(2100),
-                );
-
-                if (tanggal != null && tanggal != _dateTime) {
-                  setState(() {
-                    _dateTime = tanggal;
-                  });
-                }
-              }
-            ),
-
-            // const Text('You have pushed the button this many times:'),
-            // Text(
-            //   '$_counter',
-            //   style: Theme.of(context).textTheme.headlineMedium,
-            // ),
-          ],
-        ),
+      body: Container(
+        child: ListView.builder(
+          itemCount: dataPizza.length,
+          itemBuilder:  (context, index) {
+            return ListTile(
+              title: Text(dataPizza[index].pizzaName),
+              subtitle: Text(dataPizza[index].description),
+            );
+        },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => tampilkanDialog(context),
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
-    );
-  }
+    ),
+  };
 }
