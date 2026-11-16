@@ -1,23 +1,19 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple)),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      title: 'Flutter Secure Storage - Dido',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
+      ),
+      home: const MyHomePage(title: 'Secure Storage - Dido'),
     );
   }
 }
@@ -31,62 +27,52 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String documentsPath = '';
-  String tempPath = '';
+  final storage = const FlutterSecureStorage();
+  final myKey = 'myPass';
+  final pwdController = TextEditingController();
+  String myPass = '';
 
-  late File myFile;
-  String fileText = '';
-
-  Future<bool> writeFile() async {
-    try {
-      await myFile.writeAsString('Margherita, Capricciosa, Napoli');
-      return true;
-    } catch (e) {
-      return false;
-    }
+  Future<void> writeToSecureStorage() async {
+    await storage.write(key: myKey, value: pwdController.text);
   }
 
-  Future<bool> readFile() async {
-    try {
-      String fileContent = await myFile.readAsString();
-      setState(() {
-        fileText = fileContent;
-      });
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  Future getPaths() async {
-    final docDir = await getApplicationDocumentsDirectory();
-    final tempDir = await getTemporaryDirectory();
-
-    setState(() {
-      documentsPath = docDir.path;
-      tempPath = tempDir.path;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getPaths().then((_) async {
-      myFile = File('$documentsPath/pizza.txt');
-      writeFile();
-    });
+  Future<String> readFromSecureStorage() async {
+    String secret = await storage.read(key: myKey) ?? '';
+    return secret;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-
-        title: Text(widget.title),
-      ),
-      body: Container(
-        child: Center(child: Column(children: [Text("Path : $documentsPath")])),
+      appBar: AppBar(title: Text(widget.title)),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            TextField(
+              controller: pwdController,
+              decoration: const InputDecoration(labelText: 'Masukkan password'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                writeToSecureStorage();
+              },
+              child: const Text('Save Value'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                readFromSecureStorage().then((value) {
+                  setState(() {
+                    myPass = value;
+                  });
+                });
+              },
+              child: const Text('Read Value'),
+            ),
+            Text(myPass),
+          ],
+        ),
       ),
     );
   }
