@@ -5,6 +5,7 @@ import 'package:pml/basic_widgets/text_input.dart';
 import 'package:pml/basic_widgets/text_widget.dart';
 import 'package:pml/basic_widgets/image_widget.dart';
 import 'package:pml/model/pizza.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,28 +34,42 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String dataPizza = '';
+  int _counter = 0;
 
-  Future readJsonFile() async {
-    String jsonString = await DefaultAssetBundle.of(context)
-        .loadString('assets/pizzalist.json');
+  Future<int> getCounter() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    var appCounter = preferences.getInt('counter') ?? 0;
 
-    try {
-      var data = jsonDecode(jsonString) as List<dynamic>;
-      var listPizza = data.map((e) => Pizza.fromJson(e)).toList();
+    setState(() {
+      _counter = appCounter;
+    });
 
-      print("nama : ${listPizza[0]?.pizzaName}");
-      setState(() {
-        dataPizza = jsonString;
-      });
-    } on Exception catch (e) {
-      print(e.toString());
-    }
+    return appCounter;
+  }
+
+  Future<void> writeCounter() async {
+    _counter++;
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.setInt('counter', _counter);
+
+    setState(() {});
+  }
+
+  void _onCounterAdd() {
+    writeCounter();
+  }
+
+  void _onResetCounter() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.setInt('counter', 0);
+
+    setState(() {
+      _counter = 0;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    readJsonFile();
 
     return Scaffold(
       appBar: AppBar(
@@ -63,15 +78,19 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Container(
-        child: ListView.builder(
-          itemCount: dataPizza.length,
-          itemBuilder:  (context, index) {
-            return ListTile(
-              title: Text(dataPizza[index].pizzaName),
-              subtitle: Text(dataPizza[index].description),
-            );
-        },
+        child: Center(
+          child: Column(
+            children: [
+              Text("Counter click : $_counter"),
+              ElevatedButton(
+                onPressed: _onResetCounter,
+                child: const Text("Reset Counter"),
+              ),
+            ],
+          ),
+        ),
       ),
-    ),
-  };
+      floatingActionButton: FloatingActionButton(onPressed: _onCounterAdd),
+    );
+  }
 }
