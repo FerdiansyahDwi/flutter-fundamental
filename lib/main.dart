@@ -1,11 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:pml/basic_widgets/text_input.dart';
-import 'package:pml/basic_widgets/text_widget.dart';
-import 'package:pml/basic_widgets/image_widget.dart';
+import 'package:pml/api/pizza.dart';
 import 'package:pml/model/pizza.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:pml/pages/detail.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,83 +10,118 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple)),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      title: 'JSON & REST API - Ferdi',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
+        useMaterial3: true,
+      ),
+      home: const MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-  final String title;
+  const MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  Future<int> getCounter() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    var appCounter = preferences.getInt('counter') ?? 0;
-
-    setState(() {
-      _counter = appCounter;
-    });
-
-    return appCounter;
-  }
-
-  Future<void> writeCounter() async {
-    _counter++;
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    await preferences.setInt('counter', _counter);
-
-    setState(() {});
-  }
-
-  void _onCounterAdd() {
-    writeCounter();
-  }
-
-  void _onResetCounter() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    await preferences.setInt('counter', 0);
-
-    setState(() {
-      _counter = 0;
-    });
+  Future<List<Pizza>> callPizzas() async {
+    HttpHelper helper = HttpHelper();
+    return await helper.getPizzaList();
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
+        title: const Text('JSON & REST API - Ferdi'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      ),
+      body: FutureBuilder<List<Pizza>>(
+        future: callPizzas(),
+        builder: (BuildContext context, AsyncSnapshot<List<Pizza>> snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Text('Something went wrong: ${snapshot.error}'),
+            );
+          }
+          if (!snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-        title: Text(widget.title),
+          return ListView.builder(
+            itemCount: snapshot.data!.length,
+            itemBuilder: (BuildContext context, int position) {
+              final currentPizza = snapshot.data![position];
+
+              // PRAKTIKUM 4: Swipe untuk DELETE menggunakan Dismissible
+              return Dismissible(
+                key: Key(currentPizza.id.toString()),
+                background: Container(
+                  color: Colors.red,
+                  alignment: Alignment.centerRight,
+                  padding: const EdgeInsets.only(right: 20),
+                  child: const Icon(Icons.delete, color: Colors.white),
+                ),
+                onDismissed: (direction) {
+                  HttpHelper helper = HttpHelper();
+                  setState(() {
+                    snapshot.data!.removeWhere(
+                      (element) => element.id == currentPizza.id,
+                    );
+                  });
+                  helper.deletePizza(currentPizza.id).then((res) {
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(res)),
+                    );
+                  });
+                },
+                child: ListTile(
+                  title: Text(currentPizza.pizzaName),
+                  subtitle: Text(
+                    '${currentPizza.description} (${currentPizza.category}) - € ${currentPizza.price}',
+                  ),
+                  // PRAKTIKUM 3: Ketuk item untuk EDIT (PUT)
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PizzaDetailScreen(
+                          pizza: currentPizza,
+                          isNew: false,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              );
+            },
+          );
+        },
       ),
-      body: Container(
-        child: Center(
-          child: Column(
-            children: [
-              Text("Counter click : $_counter"),
-              ElevatedButton(
-                onPressed: _onResetCounter,
-                child: const Text("Reset Counter"),
+      // PRAKTIKUM 2: Tombol + untuk TAMBAH BARU (POST)
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PizzaDetailScreen(
+                pizza: Pizza(),
+                isNew: true,
               ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
-      floatingActionButton: FloatingActionButton(onPressed: _onCounterAdd),
     );
   }
 }
