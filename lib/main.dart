@@ -93,7 +93,7 @@ class _MyHomePageState extends State<MyHomePage> {
           children: [
             Icon(Icons.local_pizza, color: Colors.amberAccent, size: 24),
             SizedBox(width: 8),
-            Text('Pizza Haven - REST API'),
+            Text('Pizza Haven REST API - Ferdi'),
           ],
         ),
         actions: [
